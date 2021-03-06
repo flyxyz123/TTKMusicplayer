@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010-2021 by Ilya Kotov                                 *
+ *   Copyright (C) 2021 by Ilya Kotov                                      *
  *   forkotov02@ya.ru                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,27 +18,24 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef DECODERGMEFACTORY_H
-#define DECODERGMEFACTORY_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
-#include <qmmp/decoderfactory.h>
+#include "ui_settingsdialog.h"
 
-/**
-   @author Ilya Kotov <forkotov02@ya.ru>
-*/
-class DecoderGmeFactory : public QObject, DecoderFactory
+class SettingsDialog : public QDialog
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qmmp.qmmp.DecoderFactoryInterface.1.0")
-    Q_INTERFACES(DecoderFactory)
 public:
-    virtual bool canDecode(QIODevice *input) const override;
-    virtual DecoderProperties properties() const override;
-    virtual Decoder *create(const QString &path, QIODevice *input) override;
-    virtual QList<TrackInfo*> createPlayList(const QString &path, TrackInfo::Parts parts, QStringList *ignoredFiles) override;
-    virtual MetaDataModel* createMetaDataModel(const QString &path, bool readOnly) override;
-    virtual void showSettings(QWidget *parent) override;
+    explicit SettingsDialog(QWidget *parent = nullptr);
+    virtual ~SettingsDialog();
+
+public slots:
+    virtual void accept() override;
+
+private:
+    Ui::SettingsDialog m_ui;
 
 };
 
-#endif
+#endif // SETTINGSDIALOG_H
