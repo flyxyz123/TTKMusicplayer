@@ -3,6 +3,10 @@
 #include "decodergmefactory.h"
 #include "settingsdialog.h"
 
+#include <QFile>
+#include <QSettings>
+#include <QMessageBox>
+
 bool DecoderGmeFactory::canDecode(QIODevice *) const
 {
     return false;
@@ -34,7 +38,7 @@ QList<TrackInfo*> DecoderGmeFactory::createPlayList(const QString &path, TrackIn
     {
         QString filePath = path;
         filePath.remove("gme://");
-        filePath.remove(RegularWrapper("#\\d+$"));
+        filePath.remove(QRegularExpression("#\\d+$"));
 
         const int track = path.section("#", -1).toInt();
         QList<TrackInfo*> list = createPlayList(filePath, parts, ignoredFiles);
@@ -76,6 +80,18 @@ void DecoderGmeFactory::showSettings(QWidget *parent)
 {
     SettingsDialog *s = new SettingsDialog(parent);
     s->show();
+}
+
+void DecoderGmeFactory::showAbout(QWidget *parent)
+{
+    QMessageBox::about (parent, tr("About Gme Reader Plugin"),
+                        tr("Qmmp Gme Reader Plugin")+"\n"+
+                        tr("Written by: Greedysky <greedysky@163.com>"));
+}
+
+QString DecoderGmeFactory::translation() const
+{
+    return QString();
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)

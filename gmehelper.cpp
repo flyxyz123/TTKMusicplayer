@@ -1,3 +1,4 @@
+#include <QRegularExpression>
 #include <QSettings>
 #include "gmehelper.h"
 
@@ -26,12 +27,12 @@ Music_Emu *GmeHelper::load(const QString &url, int sample_rate)
     if(url.contains("://"))
     {
         path.remove("gme://");
-        path.remove(RegularWrapper("#\\d+$"));
+        path.remove(QRegularExpression("#\\d+$"));
     }
 
     const char *err = nullptr;
     gme_type_t file_type;
-    if((err = gme_identify_file(Qmmp::textCodec(path),&file_type)))
+    if((err = gme_identify_file(qPrintable(path),&file_type)))
     {
         qWarning("GmeHelper: %s", err);
         return nullptr;
@@ -49,7 +50,7 @@ Music_Emu *GmeHelper::load(const QString &url, int sample_rate)
         return nullptr;
     }
 
-    if((err = gme_load_file(m_emu, Qmmp::textCodec(path))))
+    if((err = gme_load_file(m_emu, qPrintable(path))))
     {
         qWarning("GmeHelper: %s", err);
         return nullptr;
@@ -57,7 +58,7 @@ Music_Emu *GmeHelper::load(const QString &url, int sample_rate)
 
     QString m3u_path = path.left(path.lastIndexOf("."));
     m3u_path.append(".m3u");
-    gme_load_m3u(m_emu, Qmmp::textCodec(m3u_path));
+    gme_load_m3u(m_emu, qPrintable(m3u_path));
     m_path = path;
     return m_emu;
 }
