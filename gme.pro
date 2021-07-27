@@ -1,4 +1,8 @@
-include($$PWD/../../plugins.pri)
+# references:
+# https://github.com/cspiegel/qmmp-adplug
+# https://github.com/cspiegel/qmmp-openmpt
+
+QT      += widgets
 
 HEADERS += decodergmefactory.h \
            decoder_gme.h \
@@ -12,14 +16,25 @@ SOURCES += decodergmefactory.cpp \
 
 FORMS += settingsdialog.ui
 
-DESTDIR = $$PLUGINS_PREFIX/Input
-TARGET = $${TARGET}
+CONFIG += warn_on plugin link_pkgconfig
 
-INCLUDEPATH += $$EXTRA_PREFIX/libgme/include
+TEMPLATE = lib
 
-unix{
-    QMAKE_CLEAN = $$DESTDIR/lib$${TARGET}.so
-    LIBS += -L$$EXTRA_PREFIX/libgme/lib -lgme$$STATIC_LIBRARY_SUFFIX
+QMAKE_CLEAN += lib$${TARGET}.so
+
+unix {
+	CONFIG += link_pkgconfig
+	PKGCONFIG += qmmp libgme
+	
+	QMMP_PREFIX = $$system(pkg-config qmmp --variable=prefix)
+	PLUGIN_DIR = $$system(pkg-config qmmp --variable=plugindir)/Input
+	LOCAL_INCLUDES = $${QMMP_PREFIX}/include
+	LOCAL_INCLUDES -= $$QMAKE_DEFAULT_INCDIRS
+	INCLUDEPATH += $$LOCAL_INCLUDES
+	
+	plugin.path = $${PLUGIN_DIR}
+	plugin.files = lib$${TARGET}.so
+	INSTALLS += plugin
 }
 
 win32 {
